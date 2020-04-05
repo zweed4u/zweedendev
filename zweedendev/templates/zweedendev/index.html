@@ -1,0 +1,13 @@
+{% load static %}
+
+<h1>Zweeden.dev</h1>
+<p>Hello {{ visitor_ip }}! Welcome to my page!</p>
+<p>I apologize for the crudeness of this page. I hastily spun up a VM and quickly threw a Django application and configuration together.<br>Feel free to reach out to me!</p>
+<a href="{% static "resume2.pdf" %}">Resume</a>
+<br>
+<a href="https://www.linkedin.com/in/zweeden/">Linkedin</a> | <a href="https://github.com/zweed4u">Github</a>
+<br>
+<a href="mailto:zachary.weeden@gmail.com">zachary.weeden@gmail.com</a>
+<br>
+<br>
+Current server time: {{ server_time }}
