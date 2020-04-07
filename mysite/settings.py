@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 import json
 import socket
+import requests
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -33,17 +34,26 @@ DEBUG = False
 
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.connect(("8.8.8.8", 80))
-address = str(s.getsockname()[0])
+l_address = str(s.getsockname()[0])
 s.close()
+
+try:
+    response = requests.get("https://api.ipify.org")
+    response.raise_for_status()
+    p_address = response.text.strip()
+except:
+    p_address = "127.0.0.1"  # unable to resolve public ip address
 
 # by default django doesn't allow traffic anywhere that it doesn't recgnize host
 ALLOWED_HOSTS = [
-    address,
+    l_address,
+    p_address,
     "zweeden.dev",
     "www.zweeden.dev",
-    "192.168.1.168",
     "127.0.0.1",
     "localhost",
+    "sadmachine",
+    "sadmachine.localhost",
 ]
 
 
@@ -132,3 +142,26 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 STATIC_ROOT = "/var/www/zweedendev-django/static/"
 STATIC_URL = "/static/"
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "timestamp": {"format": "{asctime} {levelname} {message}", "style": "{",},
+    },
+    "handlers": {
+        "logfile": {
+            "level": "DEBUG",
+            "class": "logging.FileHandler",
+            "filename": "/var/log/zweedendev.log",
+            "formatter": "timestamp",
+        },
+    },
+    "loggers": {
+        "": {  # blank so it propogates to others
+            "level": "DEBUG",
+            "handlers": ["logfile"],
+            "propogate": True,
+        },
+    },
+}

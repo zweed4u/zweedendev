@@ -1,3 +1,4 @@
+import logging
 import requests
 import ipaddress
 from typing import Any, Dict
@@ -6,6 +7,8 @@ from django.utils import timezone
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Visitor
+
+logger = logging.getLogger(__name__)
 
 # Create your views here.
 def get_client_ip(request):
@@ -41,6 +44,7 @@ def get_address_info(address: str) -> Dict[str, Any]:
 
 
 def index(request):
+    logger.info("Fetching user ip")
     ip = get_client_ip(request)
 
     info = get_address_info(ip)
