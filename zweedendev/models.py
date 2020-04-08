@@ -8,6 +8,8 @@ class Visitor(models.Model):
     is_safe = models.BooleanField(default=False)
     time_visited = models.DateTimeField("date visited")
     visitor_city_region = models.CharField(max_length=255, default="Unknown, Unknown")
+    is_private = models.BooleanField(default=False)
+    times_visited = models.IntegerField(default=1)
 
     def visited_recently(self):
         return self.time_visited >= timezone.now() - datetime.timedelta(days=1)

@@ -60,18 +60,28 @@ def is_safe_address(address: str, key: str) -> bool:
 def index(request):
     ip = get_client_ip(request)
     info = get_address_info(ip)
-    address_safe = is_safe_address(address, settings.VPN_KEY)
+
+    is_private = ipaddress.ip_address(ip).is_private
+    if is_private:
+        logger.info(f"{ip} is internal/private - mark as safe")
+        address_safe = True
+    else:
+        address_safe = is_safe_address(ip, settings.VPN_KEY)
     city_region = f'{info.get("city", "Unknown")}, {info.get("region", "Unknown")}'
 
+    logger.info(f"{ip} is visiting from {city_region} - safe? {address_safe}")
     try:
         visitor_obj = Visitor.objects.get(visitor_ip=ip)
         visitor_obj.time_visited = timezone.now()
+        visitor_obj.times_visited += 1
     except Visitor.DoesNotExist:
         visitor_obj = Visitor(
             visitor_ip=ip,
             time_visited=timezone.now(),
             visitor_city_region=city_region,
             is_safe=address_safe,
+            is_private=is_private,
+            times_visited=1,
         )
     visitor_obj.save()
     return render(
