@@ -27,6 +27,7 @@ with open("/etc/zweedendev.json") as f:
     conf = json.load(f)
 
 SECRET_KEY = conf["SECRET_KEY"]
+VPN_KEY = conf["VPN_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False

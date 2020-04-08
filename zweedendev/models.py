@@ -5,6 +5,7 @@ from django.utils import timezone
 # Create your models here.
 class Visitor(models.Model):
     visitor_ip = models.CharField(max_length=39)  # 15 for ipv4, 39 for ipv6
+    is_safe = models.BooleanField(default=False)
     time_visited = models.DateTimeField("date visited")
     visitor_city_region = models.CharField(max_length=255, default="Unknown, Unknown")
 

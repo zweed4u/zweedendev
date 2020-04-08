@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.utils import timezone
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.conf import settings
 from .models import Visitor
 
 logger = logging.getLogger(__name__)
@@ -37,17 +38,29 @@ def get_address_info(address: str) -> Dict[str, Any]:
         response_body = r.json()
     except:
         # request raised an exception
+        logger.info("Unable to resolve address information")
         return {"success": False}
 
     response_body["success"] = True
     return response_body
 
 
-def index(request):
-    logger.info("Fetching user ip")
-    ip = get_client_ip(request)
+def is_safe_address(address: str, key: str) -> bool:
+    try:
+        response = requests.get(
+            f"http://v2.api.iphub.info/ip/{address}", headers={"X-Key": key}
+        )
+        block = response.json()["block"]
+    except:
+        logger.info("Unable to resolve address type")
+        block = 1  # default to an unsafe address
+    return block == 0
 
+
+def index(request):
+    ip = get_client_ip(request)
     info = get_address_info(ip)
+    address_safe = is_safe_address(address, settings.VPN_KEY)
     city_region = f'{info.get("city", "Unknown")}, {info.get("region", "Unknown")}'
 
     try:
@@ -55,7 +68,10 @@ def index(request):
         visitor_obj.time_visited = timezone.now()
     except Visitor.DoesNotExist:
         visitor_obj = Visitor(
-            visitor_ip=ip, time_visited=timezone.now(), visitor_city_region=city_region
+            visitor_ip=ip,
+            time_visited=timezone.now(),
+            visitor_city_region=city_region,
+            is_safe=address_safe,
         )
     visitor_obj.save()
     return render(
