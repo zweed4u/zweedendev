@@ -8,6 +8,7 @@ authors = ["Zachary Weeden <zdw7287@rit.edu>"]
 python = ">=3.6"
 Django = "^3.0.5"
 requests = "^2.23.0"
+djangorestframework = "^3.11.0"
 
 [tool.poetry.dev-dependencies]
 

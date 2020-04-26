@@ -8,6 +8,9 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.conf import settings
 from .models import Visitor
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from zweedendev.serializers import InfoSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -89,3 +92,10 @@ def index(request):
         "zweedendev/index.html",
         {"visitor_ip": visitor_obj.visitor_ip, "server_time": timezone.now()},
     )
+
+@api_view(["GET"])
+def list_info(request):
+    ip = get_client_ip(request)
+    current_visitor_info = Visitor.objects.filter(visitor_ip=ip)[0]
+    serializer = InfoSerializer(current_visitor_info)
+    return Response(serializer.data)
