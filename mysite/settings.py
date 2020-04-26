@@ -30,7 +30,7 @@ SECRET_KEY = conf["SECRET_KEY"]
 VPN_KEY = conf["VPN_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
