@@ -14,6 +14,7 @@ from zweedendev.serializers import InfoSerializer
 
 logger = logging.getLogger(__name__)
 
+
 def i_know_he_ate_a_cheese() -> str:
     # http://www.glassgiant.com/ascii/
     return """                                                                                
@@ -62,6 +63,7 @@ def i_know_he_ate_a_cheese() -> str:
                             ,,,,:::,                                            
                             ::,,,,::                                            
                                                                                  """
+
 
 # Create your views here.
 def get_client_ip(request):
@@ -141,6 +143,7 @@ def index(request):
         "zweedendev/index.html",
         {"visitor_ip": visitor_obj.visitor_ip, "server_time": timezone.now()},
     )
+
 
 @api_view(["GET"])
 def list_info(request):
